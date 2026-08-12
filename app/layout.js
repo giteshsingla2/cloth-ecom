@@ -3,6 +3,8 @@ import { CartProvider } from "./context/CartContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ClickbaitModal from "./components/ClickbaitModal";
+import GAMScript from "./components/GAMScript";
+import GAMAd from "./components/GAMAd";
 
 export const metadata = {
   title: "Bazaar49 - India's Biggest ₹49 Fashion Sale!",
@@ -17,10 +19,24 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <CartProvider>
+          <GAMScript />
           <Header />
+
+          {/* Sitewide 300x600 Ad Size just below header */}
+          <div className="container" style={{ marginTop: 12, marginBottom: 12 }}>
+            <GAMAd
+              slotPath={process.env.NEXT_PUBLIC_GAM_SUBHEADER_300x600 || '/6355419/Header_300x600'}
+              width={300}
+              height={600}
+              lazyLoad={false}
+              label="SITEWIDE SUBHEADER AD (300×600)"
+            />
+          </div>
+
           <main style={{ flexGrow: 1 }}>
             {children}
           </main>
+
           <ClickbaitModal />
           <Footer />
         </CartProvider>

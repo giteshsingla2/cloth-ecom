@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getProducts } from './utils/products';
 import { useCart } from './context/CartContext';
 import AdSlot from './components/AdSlot';
+import GAMAd from './components/GAMAd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -75,7 +76,7 @@ export default function HomePage() {
 
       {/* Top Ad Banner */}
       <div className="container">
-        <AdSlot type="banner" />
+        <AdSlot type="banner" seed={10} />
       </div>
 
       {/* Main Content: Sidebar + Products */}
@@ -98,8 +99,8 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            <AdSlot type="sidebar" />
-            <AdSlot type="sidebar" />
+            <AdSlot type="sidebar" seed={11} />
+            <AdSlot type="sidebar" seed={12} />
           </aside>
 
           {/* Products */}
@@ -112,48 +113,75 @@ export default function HomePage() {
               <p className="countdown-text">Prices reset in <span>04:52</span></p>
             </div>
 
+            {/* GAM 300x250 Ad Unit just below "Prices reset in 04:52" */}
+            <GAMAd
+              slotPath={process.env.NEXT_PUBLIC_GAM_HOMEPAGE_HEADER_300x250 || '/6355419/Home_Header_300x250'}
+              width={300}
+              height={250}
+              lazyLoad={false}
+              label="HOMEPAGE TOP AD (300×250)"
+            />
+
+            {/* Product Grid with Infeed GAM 300x250 Ad Unit after every 4 products */}
             <div className="products-grid">
-              {filteredProducts.map(product => {
+              {filteredProducts.map((product, idx) => {
                 const disc = Math.round(100 - (product.price / product.originalPrice) * 100);
+                const showInfeedAd = (idx + 1) % 4 === 0;
+
                 return (
-                  <div key={product.id} className="product-card">
-                    <span className="sale-badge">{disc}% OFF</span>
-                    <button className="wishlist-btn" aria-label="Wishlist">♡</button>
+                  <React.Fragment key={product.id}>
+                    <div className="product-card">
+                      <span className="sale-badge">{disc}% OFF</span>
+                      <button className="wishlist-btn" aria-label="Wishlist">♡</button>
 
-                    <Link href={`/product/${product.id}`} className="product-img-container" style={{ display: 'block' }}>
-                      <img src={product.image} alt={product.title} className="product-card-img" />
-                    </Link>
+                      <Link href={`/product/${product.id}`} className="product-img-container" style={{ display: 'block' }}>
+                        <img src={product.image} alt={product.title} className="product-card-img" />
+                      </Link>
 
-                    <div className="product-info">
-                      <p className="product-category">{product.category.replace('_', ' ')}</p>
-                      <h3 className="product-title">
-                        <Link href={`/product/${product.id}`}>{product.title}</Link>
-                      </h3>
-                      <div className="price-row" style={{ flexWrap: 'wrap' }}>
-                        <span className="current-price">₹{product.price}</span>
-                        <span className="original-price">₹{product.originalPrice}</span>
-                        <span className="discount-tag">Save ₹{product.originalPrice - product.price}</span>
-                      </div>
-                      <div className="card-actions">
-                        <Link href={`/product/${product.id}`} className="btn-primary animate-pulse" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                          🛒 View & Buy
-                        </Link>
-                        <Link href={`/product/${product.id}`} className="btn-outline">Details</Link>
+                      <div className="product-info">
+                        <p className="product-category">{product.category.replace('_', ' ')}</p>
+                        <h3 className="product-title">
+                          <Link href={`/product/${product.id}`}>{product.title}</Link>
+                        </h3>
+                        <div className="price-row" style={{ flexWrap: 'wrap' }}>
+                          <span className="current-price">₹{product.price}</span>
+                          <span className="original-price">₹{product.originalPrice}</span>
+                          <span className="discount-tag">Save ₹{product.originalPrice - product.price}</span>
+                        </div>
+                        <div className="card-actions">
+                          <Link href={`/product/${product.id}`} className="btn-primary animate-pulse" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                            🛒 View & Buy
+                          </Link>
+                          <Link href={`/product/${product.id}`} className="btn-outline">Details</Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+                    {/* Infeed 300x250 GAM Ad Unit after every 4 products (lazy loads on scroll for high viewability) */}
+                    {showInfeedAd && (
+                      <div style={{ gridColumn: '1 / -1', margin: '14px 0' }}>
+                        <GAMAd
+                          slotPath={process.env.NEXT_PUBLIC_GAM_INFEED_300x250 || '/6355419/Home_Infeed_300x250'}
+                          width={300}
+                          height={250}
+                          lazyLoad={true}
+                          label={`INFEED AD #${Math.ceil((idx + 1) / 4)} (300×250 - LAZY LOADED)`}
+                        />
+                      </div>
+                    )}
+                  </React.Fragment>
                 );
               })}
             </div>
 
             <div style={{ marginTop: 28 }}>
-              <AdSlot type="banner" />
+              <AdSlot type="banner" seed={13} />
             </div>
           </section>
         </div>
 
         {/* Native Ad Grid */}
-        <AdSlot type="native-grid" />
+        <AdSlot type="native-grid" seed={14} />
       </div>
 
       {/* Live Purchase Alert */}

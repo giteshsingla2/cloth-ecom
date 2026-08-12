@@ -3,6 +3,7 @@ import React, { use, useState, useEffect } from 'react';
 import { getProductById, getProducts } from '../../utils/products';
 import { useCart } from '../../context/CartContext';
 import AdSlot from '../../components/AdSlot';
+import GAMAd from '../../components/GAMAd';
 import Link from 'next/link';
 
 export default function ProductPage({ params }) {
@@ -12,8 +13,13 @@ export default function ProductPage({ params }) {
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
-  const [stockLeft] = useState(() => Math.floor(Math.random() * 4) + 2);
-  const [viewers] = useState(() => Math.floor(Math.random() * 10) + 6);
+  const [stockLeft, setStockLeft] = useState(3);
+  const [viewers, setViewers] = useState(12);
+
+  useEffect(() => {
+    setStockLeft(Math.floor(Math.random() * 4) + 2);
+    setViewers(Math.floor(Math.random() * 10) + 6);
+  }, []);
 
   useEffect(() => {
     if (product) setSelectedImage(product.image);
@@ -53,7 +59,7 @@ export default function ProductPage({ params }) {
         </div>
 
         {/* Top Ad */}
-        <AdSlot type="banner" />
+        <AdSlot type="banner" seed={20} />
 
         {/* Product Layout */}
         <div className="product-detail-layout">
@@ -117,8 +123,16 @@ export default function ProductPage({ params }) {
               </div>
             </div>
 
-            {/* Actions */}
+            {/* Actions & GAM 300x250 Ad just above Add to Cart button */}
             <div className="detail-actions">
+              <GAMAd
+                slotPath={process.env.NEXT_PUBLIC_GAM_PRODUCT_ABOVE_ADD_TO_CART_300x250 || '/6355419/Product_Above_ATC_300x250'}
+                width={300}
+                height={250}
+                lazyLoad={false}
+                label="PRODUCT AD (300×250 ABOVE ADD TO CART)"
+              />
+
               <button className="btn-add-cart animate-shake" onClick={handleAddToCart}>
                 🛒 Add to Cart (Get Free Bonus Items!)
               </button>
@@ -143,7 +157,7 @@ export default function ProductPage({ params }) {
           <p style={{ whiteSpace: 'pre-line' }}>{product.description}</p>
         </div>
 
-        <AdSlot type="banner" />
+        <AdSlot type="banner" seed={21} />
 
         {/* Related Products */}
         <div style={{ marginTop: 36, borderTop: '2px solid #e8e5df', paddingTop: 28 }}>
@@ -174,7 +188,7 @@ export default function ProductPage({ params }) {
           </div>
         </div>
 
-        <AdSlot type="native-grid" />
+        <AdSlot type="native-grid" seed={22} />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [recentProductAdded, setRecentProductAdded] = useState(null);
   const [lastOrder, setLastOrder] = useState(null);
@@ -20,6 +21,7 @@ export function CartProvider({ children }) {
         console.error('Failed to parse cart', e);
       }
     }
+    setCartLoaded(true);
   }, []);
 
   // Save cart to localStorage when it changes
@@ -76,20 +78,15 @@ export function CartProvider({ children }) {
   // Generate 5-8 random products for the clickbaity recommendations modal, pricing some at 0 and some at 9
   const getClickbaitRecommendations = () => {
     const allProducts = getProducts();
-    // Filter out the one recently added
     const filtered = allProducts.filter(p => !recentProductAdded || p.id !== recentProductAdded.id);
-    
-    // Shuffle and pick 6 items
     const shuffled = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 6);
-    
-    // Modify their prices for the popup: some 0 INR, some 9 INR, some 19 INR
     const customPrices = [0, 9, 0, 9, 19, 29];
     return shuffled.map((item, idx) => {
       const newPrice = customPrices[idx % customPrices.length];
       return {
         ...item,
         price: newPrice,
-        originalPrice: item.price, // Keep original
+        originalPrice: item.price,
         isPromoItem: true
       };
     });
@@ -98,6 +95,7 @@ export function CartProvider({ children }) {
   return (
     <CartContext.Provider value={{
       cart,
+      cartLoaded,
       addToCart,
       removeFromCart,
       updateQuantity,
