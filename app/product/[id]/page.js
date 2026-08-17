@@ -10,7 +10,7 @@ export default function ProductPage({ params }) {
   const { id } = use(params);
   const product = getProductById(id);
   const { addToCart } = useCart();
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(product ? product.image : '');
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   const [stockLeft, setStockLeft] = useState(3);
@@ -21,10 +21,6 @@ export default function ProductPage({ params }) {
     setViewers(Math.floor(Math.random() * 10) + 6);
   }, []);
 
-  useEffect(() => {
-    if (product) setSelectedImage(product.image);
-  }, [product]);
-
   if (!product) return (
     <div className="container" style={{ textAlign: 'center', padding: '80px 16px' }}>
       <h2 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.8rem', marginBottom: 12 }}>Product Not Found</h2>
@@ -34,7 +30,19 @@ export default function ProductPage({ params }) {
   );
 
   const allProducts = getProducts();
-  const related = allProducts.filter(p => p.id !== product.id).sort(() => 0.5 - Math.random()).slice(0, 4);
+  const [related, setRelated] = useState(() =>
+    allProducts.filter(p => p.id !== product.id).slice(0, 4)
+  );
+
+  useEffect(() => {
+    setRelated(
+      allProducts
+        .filter(p => p.id !== product.id)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 4)
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
   const disc = Math.round(100 - (product.price / product.originalPrice) * 100);
 
   const handleAddToCart = () => {

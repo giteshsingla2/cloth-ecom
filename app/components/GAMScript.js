@@ -2,6 +2,10 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
+// Module-level flag: out-of-page slots must only be defined once per page load.
+// React Strict Mode double-invokes effects, so a ref alone isn't sufficient.
+let outOfPageSlotsInitialized = false;
+
 export default function GAMScript() {
   const pathname = usePathname();
 
@@ -18,40 +22,44 @@ export default function GAMScript() {
     window.googletag = window.googletag || { cmd: [] };
 
     window.googletag.cmd.push(() => {
-      const pubads = window.googletag.pubads();
 
-      // Configure GAM settings for high viewability and layout preservation:
-      // collapseEmptyDivs(true) preserves ad space when loading, closes div if slot remains unfilled
-      pubads.collapseEmptyDivs(true);
-
-      // Enable Lazy Load for high viewability on long pages
-      pubads.enableLazyLoad({
-        fetchMarginPercent: 200,   // Fetch when within 2 viewports
-        renderMarginPercent: 100,  // Render when within 1 viewport
-        mobileScaling: 2.0,        // Double margins on mobile
+      // Consolidated page-level config using the modern setConfig API:
+      //   collapseDiv   → 'ON_NO_FILL'  (collapse slot only when no ad is returned)
+      //   lazyLoad      → replaces deprecated pubads.enableLazyLoad()
+      //   singleRequest → replaces deprecated pubads.enableSingleRequest()
+      window.googletag.setConfig({
+        collapseDiv: 'ON_NO_FILL',
+        lazyLoad: {
+          fetchMarginPercent: 200,   // Fetch when within 2 viewports
+          renderMarginPercent: 100,  // Render when within 1 viewport
+          mobileScaling: 2.0,        // Double margins on mobile
+        },
+        singleRequest: true,
       });
 
-      // Out-of-Page Out-of-Page / Anchor & Interstitial Ad units
-      const anchorPath = process.env.NEXT_PUBLIC_GAM_BOTTOM_ANCHOR_1x1 || '/6355419/Bottom_Anchor_1x1';
-      const interstitialPath = process.env.NEXT_PUBLIC_GAM_INTERSTITIAL || '/6355419/Interstitial';
+      // Out-of-Page / Anchor & Interstitial Ad units.
+      // Guard with a module-level flag so these are only defined once —
+      // React Strict Mode double-invokes effects which otherwise causes
+      // "Format already created on the page" GPT errors.
+      if (!outOfPageSlotsInitialized && window.googletag.enums && window.googletag.enums.OutOfPageFormat) {
+        outOfPageSlotsInitialized = true;
 
-      if (window.googletag.enums && window.googletag.enums.OutOfPageFormat) {
+        const anchorPath = process.env.NEXT_PUBLIC_GAM_BOTTOM_ANCHOR_1x1 || '/6355419/Bottom_Anchor_1x1';
+        const interstitialPath = process.env.NEXT_PUBLIC_GAM_INTERSTITIAL || '/6355419/Interstitial';
+
         // Define Bottom Anchor Ad (1x1 out of page)
-        try {
-          window.googletag.defineOutOfPageSlot(anchorPath, window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR);
-        } catch (e) {
-          // Slot already defined or non-fatal
-        }
+        window.googletag.defineOutOfPageSlot(
+          anchorPath,
+          window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
+        );
 
         // Define Interstitial Ad
-        try {
-          window.googletag.defineOutOfPageSlot(interstitialPath, window.googletag.enums.OutOfPageFormat.INTERSTITIAL);
-        } catch (e) {
-          // Slot already defined or non-fatal
-        }
+        window.googletag.defineOutOfPageSlot(
+          interstitialPath,
+          window.googletag.enums.OutOfPageFormat.INTERSTITIAL
+        );
       }
 
-      pubads.enableSingleRequest();
       window.googletag.enableServices();
     });
   }, []);
