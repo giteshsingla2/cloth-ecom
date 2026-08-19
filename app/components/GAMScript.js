@@ -48,16 +48,23 @@ export default function GAMScript() {
         const interstitialPath = process.env.NEXT_PUBLIC_GAM_INTERSTITIAL || '/6355419/Interstitial';
 
         // Define Bottom Anchor Ad (1x1 out of page)
-        window.googletag.defineOutOfPageSlot(
+        const anchorSlot = window.googletag.defineOutOfPageSlot(
           anchorPath,
           window.googletag.enums.OutOfPageFormat.BOTTOM_ANCHOR
         );
+        if (anchorSlot) {
+          anchorSlot.addService(window.googletag.pubads());
+        }
 
         // Define Interstitial Ad
-        window.googletag.defineOutOfPageSlot(
+        const interstitialSlot = window.googletag.defineOutOfPageSlot(
           interstitialPath,
           window.googletag.enums.OutOfPageFormat.INTERSTITIAL
         );
+        if (interstitialSlot) {
+          interstitialSlot.addService(window.googletag.pubads());
+          window.googletag.display(interstitialSlot);
+        }
       }
 
       window.googletag.enableServices();

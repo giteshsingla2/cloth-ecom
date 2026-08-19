@@ -4,6 +4,7 @@ import { CartProvider } from "./context/CartContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ClickbaitModal from "./components/ClickbaitModal";
+import InterstitialAdModal from "./components/InterstitialAdModal";
 import GAMScript from "./components/GAMScript";
 import GAMAd from "./components/GAMAd";
 import ScrollToTop from "./components/ScrollToTop";
@@ -68,6 +69,7 @@ fbq('track', 'PageView');
           </main>
 
           <ClickbaitModal />
+          <InterstitialAdModal />
           <Footer />
         </CartProvider>
       </body>

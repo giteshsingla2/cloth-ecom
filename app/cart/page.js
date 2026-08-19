@@ -315,10 +315,11 @@ export default function CartPage() {
 
         .cart-upsell-box {
           background: #fffbeb;
-          border: 1.5px dashed #fbbf24;
+          border: 1.5px solid #fde68a;
           border-radius: 14px;
           padding: 20px;
           margin-top: 24px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .cart-upsell-heading {

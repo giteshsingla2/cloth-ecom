@@ -111,9 +111,10 @@ export default function GAMAd({
     width: `${width}px`,
     maxWidth: '100%',
     height: `${height}px`,
-    background: '#fafaf8',
-    border: '1.5px dashed #fed7aa',
+    background: '#ffffff',
+    border: '1px solid #e7e5e4',
     borderRadius: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -127,14 +128,14 @@ export default function GAMAd({
     <div ref={adRef} className={`gam-ad-wrapper ${className}`} style={containerStyle}>
       <div id={slotId || undefined} style={adBoxStyle}>
         {/* Fallback preview while GAM script loads or if unfilled */}
-        <div style={{ textTransform: 'uppercase', fontSize: '0.65rem', fontWeight: 800, color: '#f97316', letterSpacing: '0.8px', marginBottom: 4 }}>
-          📢 {label}
+        <div style={{ textTransform: 'uppercase', fontSize: '0.65rem', fontWeight: 700, color: '#9ca3af', letterSpacing: '0.8px', marginBottom: 4 }}>
+          {label}
         </div>
-        <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#57534e' }}>
+        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#374151' }}>
           {width}×{height} Ad Unit
         </div>
-        <div style={{ fontSize: '0.72rem', color: '#a8a29e', marginTop: 2 }}>
-          Slot: {slotPath ? slotPath.split('/').pop() : 'GAM Ad'}
+        <div style={{ fontSize: '0.72rem', color: '#9ca3af', marginTop: 2 }}>
+          {slotPath ? slotPath.split('/').pop() : 'GAM Ad'}
         </div>
       </div>
     </div>

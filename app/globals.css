@@ -709,8 +709,8 @@ input, select, textarea { font-family: 'Poppins', sans-serif; }
 
 /* ─── AD SLOTS ─── */
 .fake-ad-banner {
-  background: linear-gradient(135deg, #fffbeb, #fff7ed);
-  border: 1.5px dashed #fcd34d;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   padding: 14px 18px;
   margin: 20px 0;
@@ -719,8 +719,9 @@ input, select, textarea { font-family: 'Poppins', sans-serif; }
   overflow: hidden;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
 }
-.fake-ad-banner:hover { background: #fff7ed; border-color: var(--saffron); }
+.fake-ad-banner:hover { background: #fff7ed; border-color: var(--saffron); box-shadow: var(--shadow-md); }
 
 .ad-banner-link {
   display: flex;
@@ -1299,7 +1300,7 @@ input, select, textarea { font-family: 'Poppins', sans-serif; }
 
 .progress-banner {
   background: var(--gold-light);
-  border: 1.5px dashed #fbbf24;
+  border: 1.5px solid #fde68a;
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   margin-bottom: 20px;
@@ -1444,7 +1445,7 @@ input, select, textarea { font-family: 'Poppins', sans-serif; }
 
 .free-gift-box {
   background: linear-gradient(135deg, var(--saffron-light), var(--gold-light));
-  border: 2px dashed #fbbf24;
+  border: 1.5px solid #fde68a;
   border-radius: var(--radius-md);
   padding: 20px;
   margin: 24px 0;
